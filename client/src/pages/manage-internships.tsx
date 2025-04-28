@@ -226,8 +226,9 @@ export default function ManageInternships() {
   
   // Filter internship list
   const filteredInternships = internshipList.filter(internship => {
-    const matchesSearch = internship.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          internship.companyName?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = 
+      (internship.title?.toLowerCase() || "").includes(searchTerm.toLowerCase()) || 
+      (internship.companyName?.toLowerCase() || "").includes(searchTerm.toLowerCase());
     const matchesPostedBy = !postedByFilter || postedByFilter === "all" || internship.postedBy === postedByFilter;
     const matchesStatus = !statusFilter || statusFilter === "all" || internship.status === statusFilter;
     

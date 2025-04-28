@@ -252,8 +252,9 @@ export default function ManageFaculty() {
   
   // Filter faculty list
   const filteredFaculty = facultyList.filter(faculty => {
-    const matchesSearch = faculty.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         faculty.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = 
+      (faculty.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) || 
+      (faculty.email?.toLowerCase() || "").includes(searchTerm.toLowerCase());
     const matchesDepartment = !departmentFilter || departmentFilter === "all" || faculty.department === departmentFilter;
     const matchesStatus = !statusFilter || statusFilter === "all" || faculty.status === statusFilter;
     
@@ -515,13 +516,13 @@ export default function ManageFaculty() {
                     <TableCell>
                       <div className="flex items-center">
                         <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-primary mr-3">
-                          <span>{getInitials(faculty.name)}</span>
+                          <span>{getInitials(faculty.name || "Faculty")}</span>
                         </div>
-                        <span className="font-medium">{faculty.name}</span>
+                        <span className="font-medium">{faculty.name || "Unknown"}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-sm">{faculty.email}</TableCell>
-                    <TableCell className="text-sm">{faculty.department}</TableCell>
+                    <TableCell className="text-sm">{faculty.email || "No email"}</TableCell>
+                    <TableCell className="text-sm">{faculty.department || "Not assigned"}</TableCell>
                     <TableCell className="text-sm">{faculty.internshipsPosted || 0}</TableCell>
                     <TableCell>
                       <span className={cn(
@@ -573,7 +574,7 @@ export default function ManageFaculty() {
                             <AlertDialogHeader>
                               <AlertDialogTitle>Delete Faculty Account</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Are you sure you want to delete {faculty.name}'s account? This action cannot be undone.
+                                Are you sure you want to delete {faculty.name || "this faculty"}'s account? This action cannot be undone.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>

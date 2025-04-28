@@ -216,8 +216,9 @@ export default function ManageStudents() {
   
   // Filter student list
   const filteredStudents = studentList.filter(student => {
-    const matchesSearch = student.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          student.email?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = 
+      (student.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) || 
+      (student.email?.toLowerCase() || "").includes(searchTerm.toLowerCase());
     const matchesCourse = !courseFilter || courseFilter === "all" || student.course === courseFilter;
     const matchesStatus = !statusFilter || statusFilter === "all" || student.status === statusFilter;
     
@@ -472,7 +473,7 @@ export default function ManageStudents() {
                             <AlertDialogHeader>
                               <AlertDialogTitle>Delete Student Account</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Are you sure you want to delete {student.name}'s account? This action cannot be undone.
+                                Are you sure you want to delete {student.name || "this student"}'s account? This action cannot be undone.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
