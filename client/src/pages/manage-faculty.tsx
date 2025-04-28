@@ -254,8 +254,8 @@ export default function ManageFaculty() {
   const filteredFaculty = facultyList.filter(faculty => {
     const matchesSearch = faculty.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          faculty.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDepartment = departmentFilter ? faculty.department === departmentFilter : true;
-    const matchesStatus = statusFilter ? faculty.status === statusFilter : true;
+    const matchesDepartment = !departmentFilter || departmentFilter === "all" || faculty.department === departmentFilter;
+    const matchesStatus = !statusFilter || statusFilter === "all" || faculty.status === statusFilter;
     
     return matchesSearch && matchesDepartment && matchesStatus;
   });
@@ -442,7 +442,7 @@ export default function ManageFaculty() {
                 <SelectValue placeholder="All Departments" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Departments</SelectItem>
+                <SelectItem value="all">All Departments</SelectItem>
                 <SelectItem value="Computer Science">Computer Science</SelectItem>
                 <SelectItem value="Electronics & Communication">Electronics & Communication</SelectItem>
                 <SelectItem value="Mechanical Engineering">Mechanical Engineering</SelectItem>
@@ -462,7 +462,7 @@ export default function ManageFaculty() {
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Status</SelectItem>
+                <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="active">Active</SelectItem>
                 <SelectItem value="inactive">Inactive</SelectItem>
               </SelectContent>

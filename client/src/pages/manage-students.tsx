@@ -343,7 +343,7 @@ export default function ManageStudents() {
                 <SelectValue placeholder="All Courses" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Courses</SelectItem>
+                <SelectItem value="all">All Courses</SelectItem>
                 <SelectItem value="Computer Science">Computer Science</SelectItem>
                 <SelectItem value="Electronics">Electronics</SelectItem>
                 <SelectItem value="Mechanical">Mechanical</SelectItem>
@@ -363,7 +363,7 @@ export default function ManageStudents() {
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Status</SelectItem>
+                <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="active">Active</SelectItem>
                 <SelectItem value="inactive">Inactive</SelectItem>
               </SelectContent>
