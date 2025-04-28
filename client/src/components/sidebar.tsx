@@ -64,18 +64,16 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
           <ul className="space-y-1">
             {navigationItems.map((item) => (
               <li key={item.href}>
-                <Link href={item.href}>
-                  <a 
-                    className={cn(
-                      "flex items-center space-x-3 p-3 rounded-lg font-medium",
-                      location === item.href
-                        ? "text-primary bg-indigo-50"
-                        : "text-gray-700 hover:bg-indigo-50 hover:text-primary transition-colors"
-                    )}
-                  >
-                    {item.icon}
-                    <span>{item.label}</span>
-                  </a>
+                <Link href={item.href} 
+                  className={cn(
+                    "flex items-center space-x-3 p-3 rounded-lg font-medium",
+                    location === item.href
+                      ? "text-primary bg-indigo-50"
+                      : "text-gray-700 hover:bg-indigo-50 hover:text-primary transition-colors"
+                  )}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
                 </Link>
               </li>
             ))}
