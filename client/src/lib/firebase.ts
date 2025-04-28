@@ -31,7 +31,17 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+let app;
+try {
+  app = initializeApp(firebaseConfig);
+} catch (error: any) {
+  // If app already exists, use the existing one
+  if (error.code === 'app/duplicate-app') {
+    app = initializeApp(firebaseConfig, 'superAdminApp');
+  } else {
+    throw error;
+  }
+}
 const auth = getAuth(app);
 const db = getFirestore(app);
 

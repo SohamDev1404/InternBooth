@@ -132,13 +132,23 @@ export default function Home() {
         }));
         
         setApplications(formattedApplications);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error fetching dashboard data:", error);
-        toast({
-          variant: "destructive",
-          title: "Error fetching data",
-          description: "Failed to load dashboard data. Please try again.",
-        });
+        
+        // More specific error message for permission denied
+        if (error.code === "permission-denied") {
+          toast({
+            variant: "destructive",
+            title: "Permission Denied",
+            description: "You don't have access to this data. Please make sure your Firebase security rules are configured correctly.",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Error fetching data",
+            description: error.message || "Failed to load dashboard data. Please try again.",
+          });
+        }
       }
     };
     
@@ -173,13 +183,23 @@ export default function Home() {
           app.id === id ? { ...app, status: "test_assigned" } : app
         ));
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error assigning test:", error);
-      toast({
-        variant: "destructive",
-        title: "Error assigning test",
-        description: "Failed to assign test. Please try again.",
-      });
+      
+      // More specific error message for permission denied
+      if (error.code === "permission-denied") {
+        toast({
+          variant: "destructive",
+          title: "Permission Denied",
+          description: "You don't have permission to assign tests. Please check your Firebase security rules.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error assigning test",
+          description: error.message || "Failed to assign test. Please try again.",
+        });
+      }
     }
   };
 
