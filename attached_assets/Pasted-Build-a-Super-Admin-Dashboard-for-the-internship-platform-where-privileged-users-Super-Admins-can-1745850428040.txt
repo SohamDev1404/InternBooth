@@ -1,0 +1,228 @@
+Build a Super Admin Dashboard for the internship platform, where privileged users (Super Admins) can:
+
+Generate Faculty accounts
+
+Manage Students, Faculty, Internships, and Tests
+
+Assign internship-related Tests to students after they apply
+
+Monitor user activity (active users, analytics)
+
+🛠 Features Required
+1. Navbar (top)
+Logo (left)
+
+Navigation links:
+
+Home
+
+Manage Faculty
+
+Manage Students
+
+Manage Internships
+
+Manage Tests
+
+Platform Analytics
+
+Profile icon (right) with logout option
+
+2. Main Dashboard (Home)
+(A snapshot after login)
+
+Welcome text: "Welcome back, Super Admin!"
+
+Quick info cards:
+
+Total Students
+
+Total Faculty
+
+Active Users Today
+
+Total Internships Posted
+
+Graphs showing:
+
+Weekly Active Students
+
+Weekly Internship Applications
+
+Test Assignments and Results
+
+3. Generate Faculty Account Page
+Form to create a faculty:
+
+Name (input)
+
+Email (input)
+
+Auto-generate Password (button)
+
+Save this in Firebase under faculty collection.
+
+After generation, show success message with credentials to be shared manually.
+
+4. Manage Students Page
+Table showing all registered students (students collection):
+
+Name, Email, Course, Status (Active/Inactive)
+
+Admin Actions:
+
+Edit student profile
+
+Activate/Deactivate student account
+
+Delete student
+
+Filters:
+
+Search by Name
+
+Filter by Course/Branch
+
+Filter by Active/Inactive
+
+5. Manage Faculty Page
+Table showing all registered faculty:
+
+Name, Email, Department, Status
+
+Admin Actions:
+
+Edit faculty profile
+
+Activate/Deactivate faculty account
+
+Delete faculty
+
+Filters:
+
+Search by Name
+
+Filter by Department
+
+Filter by Status
+
+6. Manage Internships Page
+Table of all posted internships:
+
+Title, Posted By (Faculty/Student Startup), Company Name, Status (Open/Closed)
+
+Admin Actions:
+
+Edit internship details
+
+Close internship
+
+Delete internship post
+
+7. Manage Tests Page (➔ Updated based on your idea!)
+Tests Assignment Flow:
+
+After a student applies for an internship (application stored in Firebase under applications collection), Super Admin will see new applications.
+
+Super Admin can assign a specific test to those students directly.
+
+Assignments will be stored under a testsAssigned collection linking:
+
+Student ID
+
+Internship ID
+
+Test ID
+
+Status (Assigned / Completed / Evaluated)
+
+Features:
+
+Create New Test:
+
+Test Title, Questions (MCQ/Short Answer)
+
+Assign Test to Applicant:
+
+Pick Student + Pick Internship → Assign Test
+
+View Assigned Tests:
+
+See which students have been assigned which tests.
+
+View Student's Test Status (Not Started / In Progress / Submitted)
+
+Evaluate Test (optional: for subjective tests)
+
+Students will get notified (or see "Take Test" in their student dashboard) once assigned.
+
+8. Platform Analytics Page
+Usage statistics:
+
+Total active students today
+
+Internship applications today
+
+Tests assigned vs completed
+
+Startups vs Faculty internship postings
+
+Visualizations:
+
+Line graphs, pie charts (using Chart.js / Recharts)
+
+9. Firebase Database Considerations
+Collections:
+
+students
+
+faculty
+
+internships
+
+applications (student applications for internships)
+
+tests
+
+testsAssigned
+
+Role-based Access Control:
+
+Super Admins only can access /superadmin/* routes.
+
+Real-time listeners (onSnapshot) for active data updates.
+
+🎨 Design Style
+Same clean and minimal UI as the login page.
+
+Light grey background (#F7F7F7).
+
+Main accent color: Indigo (#6366F1) or violet shades.
+
+Soft, smooth shadows and rounded elements.
+
+Subtle animations for actions like delete, update.
+
+Loading spinners and toast notifications for better UX.
+
+🧹 In Short: Final Super Admin Capabilities
+
+Action	What Happens
+Generate Faculty	Create login credentials and store in Firebase
+Manage Students	View/Edit/Deactivate/Delete
+Manage Faculty	View/Edit/Deactivate/Delete
+Manage Internships	View/Edit/Close/Delete
+Manage Tests	Create tests, assign tests after application, monitor results
+Platform Analytics	View user stats, active sessions, platform health
+🔥 Pages Structure
+/superadmin
+
+/superadmin/manage-faculty
+
+/superadmin/manage-students
+
+/superadmin/manage-internships
+
+/superadmin/manage-tests
+
+/superadmin/analytics
