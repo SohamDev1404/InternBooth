@@ -218,8 +218,8 @@ export default function ManageStudents() {
   const filteredStudents = studentList.filter(student => {
     const matchesSearch = student.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           student.email?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCourse = courseFilter ? student.course === courseFilter : true;
-    const matchesStatus = statusFilter ? student.status === statusFilter : true;
+    const matchesCourse = !courseFilter || courseFilter === "all" || student.course === courseFilter;
+    const matchesStatus = !statusFilter || statusFilter === "all" || student.status === statusFilter;
     
     return matchesSearch && matchesCourse && matchesStatus;
   });

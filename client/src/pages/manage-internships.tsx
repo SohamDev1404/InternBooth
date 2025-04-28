@@ -228,8 +228,8 @@ export default function ManageInternships() {
   const filteredInternships = internshipList.filter(internship => {
     const matchesSearch = internship.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           internship.companyName?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesPostedBy = postedByFilter ? internship.postedBy === postedByFilter : true;
-    const matchesStatus = statusFilter ? internship.status === statusFilter : true;
+    const matchesPostedBy = !postedByFilter || postedByFilter === "all" || internship.postedBy === postedByFilter;
+    const matchesStatus = !statusFilter || statusFilter === "all" || internship.status === statusFilter;
     
     return matchesSearch && matchesPostedBy && matchesStatus;
   });
@@ -275,7 +275,7 @@ export default function ManageInternships() {
                 <SelectValue placeholder="All" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All</SelectItem>
+                <SelectItem value="all">All</SelectItem>
                 <SelectItem value="faculty">Faculty</SelectItem>
                 <SelectItem value="student">Student Startup</SelectItem>
               </SelectContent>
@@ -292,7 +292,7 @@ export default function ManageInternships() {
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Status</SelectItem>
+                <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="open">Open</SelectItem>
                 <SelectItem value="closed">Closed</SelectItem>
               </SelectContent>
