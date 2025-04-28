@@ -105,7 +105,7 @@ export default function ManageStudents() {
         toast({
           variant: "destructive",
           title: "Error fetching students",
-          description: "Failed to load student list. Please try again.",
+          description: handleFirebaseError(error),
         });
       } finally {
         setIsLoading(false);
@@ -149,7 +149,7 @@ export default function ManageStudents() {
       toast({
         variant: "destructive",
         title: "Error updating student",
-        description: "Failed to update student account. Please try again.",
+        description: handleFirebaseError(error),
       });
     } finally {
       setIsUpdating(false);
@@ -187,7 +187,7 @@ export default function ManageStudents() {
       toast({
         variant: "destructive",
         title: "Error updating status",
-        description: "Failed to update student status. Please try again.",
+        description: handleFirebaseError(error),
       });
     }
   };
@@ -209,7 +209,7 @@ export default function ManageStudents() {
       toast({
         variant: "destructive",
         title: "Error deleting student",
-        description: "Failed to delete student account. Please try again.",
+        description: handleFirebaseError(error),
       });
     }
   };

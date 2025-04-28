@@ -61,7 +61,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Textarea } from "@/components/ui/textarea";
-import { getInternshipList, updateInternship, deleteInternship } from "@/lib/firebase";
+import { getInternshipList, updateInternship, deleteInternship, handleFirebaseError } from "@/lib/firebase";
 import { cn } from "@/lib/utils";
 
 // Internship form schema
@@ -108,7 +108,7 @@ export default function ManageInternships() {
         toast({
           variant: "destructive",
           title: "Error fetching internships",
-          description: "Failed to load internship list. Please try again.",
+          description: handleFirebaseError(error),
         });
       } finally {
         setIsLoading(false);
@@ -171,7 +171,7 @@ export default function ManageInternships() {
       toast({
         variant: "destructive",
         title: "Error updating internship",
-        description: "Failed to update internship. Please try again.",
+        description: handleFirebaseError(error),
       });
     } finally {
       setIsUpdating(false);
@@ -197,7 +197,7 @@ export default function ManageInternships() {
       toast({
         variant: "destructive",
         title: "Error closing internship",
-        description: "Failed to close internship. Please try again.",
+        description: handleFirebaseError(error),
       });
     }
   };
@@ -219,7 +219,7 @@ export default function ManageInternships() {
       toast({
         variant: "destructive",
         title: "Error deleting internship",
-        description: "Failed to delete internship. Please try again.",
+        description: handleFirebaseError(error),
       });
     }
   };
