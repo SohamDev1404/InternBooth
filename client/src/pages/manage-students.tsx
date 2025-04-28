@@ -60,7 +60,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { getStudentList, updateStudent, deleteStudent } from "@/lib/firebase";
+import { getStudentList, updateStudent, deleteStudent, handleFirebaseError } from "@/lib/firebase";
 import { getInitials } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 

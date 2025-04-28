@@ -63,7 +63,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { createFaculty, updateFaculty, deleteFaculty, getFacultyList } from "@/lib/firebase";
+import { createFaculty, updateFaculty, deleteFaculty, getFacultyList, handleFirebaseError } from "@/lib/firebase";
 import { generatePassword, getInitials } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
@@ -110,7 +110,7 @@ export default function ManageFaculty() {
         toast({
           variant: "destructive",
           title: "Error fetching faculty",
-          description: "Failed to load faculty list. Please try again.",
+          description: handleFirebaseError(error),
         });
       } finally {
         setIsLoading(false);
@@ -178,7 +178,7 @@ export default function ManageFaculty() {
       toast({
         variant: "destructive",
         title: "Error saving faculty",
-        description: "Failed to save faculty account. Please try again.",
+        description: handleFirebaseError(error),
       });
     } finally {
       setIsCreating(false);
@@ -217,7 +217,7 @@ export default function ManageFaculty() {
       toast({
         variant: "destructive",
         title: "Error updating status",
-        description: "Failed to update faculty status. Please try again.",
+        description: handleFirebaseError(error),
       });
     }
   };
@@ -239,7 +239,7 @@ export default function ManageFaculty() {
       toast({
         variant: "destructive",
         title: "Error deleting faculty",
-        description: "Failed to delete faculty account. Please try again.",
+        description: handleFirebaseError(error),
       });
     }
   };
