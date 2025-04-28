@@ -241,4 +241,23 @@ export const onTestAssignmentsChange = (callback: (assignments: any[]) => void) 
   });
 };
 
+// Helper function for handling Firebase errors
+export const handleFirebaseError = (error: any): string => {
+  console.error("Firebase error:", error);
+  
+  if (error.code === 'permission-denied') {
+    return "You don't have permission to perform this action. Please contact your administrator.";
+  } 
+  
+  if (error.code?.includes('auth/')) {
+    return `Authentication error: ${error.message}`;
+  }
+  
+  if (error.code?.includes('firestore/')) {
+    return `Database error: ${error.message}`;
+  }
+  
+  return error.message || "An unexpected error occurred. Please try again.";
+};
+
 export { auth, db };

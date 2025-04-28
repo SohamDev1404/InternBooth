@@ -65,6 +65,12 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
             {navigationItems.map((item) => (
               <li key={item.href}>
                 <Link href={item.href} 
+                  onClick={() => {
+                    // Close sidebar on mobile when link is clicked
+                    if (window.innerWidth < 1024) {
+                      setOpen(false);
+                    }
+                  }}
                   className={cn(
                     "flex items-center space-x-3 p-3 rounded-lg font-medium",
                     location === item.href
@@ -88,6 +94,10 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
                   onClick={(e) => {
                     e.preventDefault();
                     if (item.onClick) item.onClick();
+                    // Close sidebar on mobile when item is clicked
+                    if (window.innerWidth < 1024) {
+                      setOpen(false);
+                    }
                   }}
                   className={cn(
                     "flex items-center space-x-3 p-3 rounded-lg text-gray-700 transition-colors",
