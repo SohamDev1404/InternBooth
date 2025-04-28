@@ -76,7 +76,8 @@ import {
   getStudentList, 
   getInternshipList, 
   assignTest,
-  getTestAssignments
+  getTestAssignments,
+  handleFirebaseError
 } from "@/lib/firebase";
 
 // Test form schema
@@ -163,7 +164,7 @@ export default function ManageTests() {
         toast({
           variant: "destructive",
           title: "Error fetching data",
-          description: "Failed to load tests and related data. Please try again.",
+          description: handleFirebaseError(error),
         });
       } finally {
         setIsLoading(false);
@@ -200,7 +201,7 @@ export default function ManageTests() {
       toast({
         variant: "destructive",
         title: "Error creating test",
-        description: "Failed to create test. Please try again.",
+        description: handleFirebaseError(error),
       });
     } finally {
       setIsSubmitting(false);
@@ -251,7 +252,7 @@ export default function ManageTests() {
       toast({
         variant: "destructive",
         title: "Error assigning test",
-        description: error.message || "Failed to assign test. Please try again.",
+        description: error.message ? error.message : handleFirebaseError(error),
       });
     } finally {
       setIsSubmitting(false);
@@ -281,7 +282,7 @@ export default function ManageTests() {
       toast({
         variant: "destructive",
         title: "Error deleting test",
-        description: "Failed to delete test. Please try again.",
+        description: handleFirebaseError(error),
       });
     }
   };
