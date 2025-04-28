@@ -60,11 +60,17 @@ export const logout = () => {
 
 // Firestore functions
 export const createFaculty = async (faculty: any) => {
+  // Make sure a user is authenticated before making the request
+  if (!auth.currentUser) {
+    throw new Error("You must be logged in to perform this action");
+  }
+  
   const facultyRef = collection(db, "faculty");
   return addDoc(facultyRef, {
     ...faculty,
     createdAt: serverTimestamp(),
-    status: "active"
+    status: "active",
+    createdBy: auth.currentUser.uid // Track who created this document
   });
 };
 
@@ -75,10 +81,16 @@ export const getFacultyList = async () => {
 };
 
 export const updateFaculty = async (id: string, data: any) => {
+  // Make sure a user is authenticated before making the request
+  if (!auth.currentUser) {
+    throw new Error("You must be logged in to perform this action");
+  }
+  
   const facultyRef = doc(db, "faculty", id);
   return updateDoc(facultyRef, {
     ...data,
-    updatedAt: serverTimestamp()
+    updatedAt: serverTimestamp(),
+    updatedBy: auth.currentUser.uid // Track who updated this document
   });
 };
 
@@ -94,10 +106,16 @@ export const getStudentList = async () => {
 };
 
 export const updateStudent = async (id: string, data: any) => {
+  // Make sure a user is authenticated before making the request
+  if (!auth.currentUser) {
+    throw new Error("You must be logged in to perform this action");
+  }
+  
   const studentRef = doc(db, "students", id);
   return updateDoc(studentRef, {
     ...data,
-    updatedAt: serverTimestamp()
+    updatedAt: serverTimestamp(),
+    updatedBy: auth.currentUser.uid // Track who updated this document
   });
 };
 
@@ -126,11 +144,17 @@ export const deleteInternship = async (id: string) => {
 };
 
 export const createTest = async (test: any) => {
+  // Make sure a user is authenticated before making the request
+  if (!auth.currentUser) {
+    throw new Error("You must be logged in to perform this action");
+  }
+  
   const testsRef = collection(db, "tests");
   return addDoc(testsRef, {
     ...test,
     createdAt: serverTimestamp(),
-    status: "active"
+    status: "active",
+    createdBy: auth.currentUser.uid // Track who created this document
   });
 };
 
@@ -141,10 +165,16 @@ export const getTestsList = async () => {
 };
 
 export const updateTest = async (id: string, data: any) => {
+  // Make sure a user is authenticated before making the request
+  if (!auth.currentUser) {
+    throw new Error("You must be logged in to perform this action");
+  }
+  
   const testRef = doc(db, "tests", id);
   return updateDoc(testRef, {
     ...data,
-    updatedAt: serverTimestamp()
+    updatedAt: serverTimestamp(),
+    updatedBy: auth.currentUser.uid // Track who updated this document
   });
 };
 
@@ -154,11 +184,17 @@ export const deleteTest = async (id: string) => {
 };
 
 export const assignTest = async (assignment: any) => {
+  // Make sure a user is authenticated before making the request
+  if (!auth.currentUser) {
+    throw new Error("You must be logged in to perform this action");
+  }
+  
   const assignmentsRef = collection(db, "testsAssigned");
   return addDoc(assignmentsRef, {
     ...assignment,
     assignedAt: serverTimestamp(),
-    status: "assigned"
+    status: "assigned",
+    assignedBy: auth.currentUser.uid // Track who assigned this test
   });
 };
 
