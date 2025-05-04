@@ -356,6 +356,11 @@ export default function ManageInternships() {
                       </span>
                     </TableCell>
                     <TableCell>
+                      {internship.facultyName || 
+                       (internship.facultyId ? `ID: ${internship.facultyId}` : 
+                       internship.postedBy === "faculty" ? "Unknown Faculty" : "N/A")}
+                    </TableCell>
+                    <TableCell>
                       <span className={cn(
                         "px-2 py-1 rounded-full text-xs",
                         internship.status === "open" 
@@ -565,13 +570,22 @@ export default function ManageInternships() {
                 <p className="text-sm text-gray-500">{selectedInternship.companyName}</p>
               </div>
               
-              <div className="flex space-x-4">
+              <div className="flex flex-wrap gap-4">
                 <div>
                   <span className="text-xs text-gray-500">Posted By</span>
                   <p className="text-sm">
                     {selectedInternship.postedBy === "faculty" ? "Faculty" : "Student Startup"}
                   </p>
                 </div>
+                {selectedInternship.postedBy === "faculty" && (
+                  <div>
+                    <span className="text-xs text-gray-500">Faculty Name</span>
+                    <p className="text-sm">
+                      {selectedInternship.facultyName || 
+                      (selectedInternship.facultyId ? `ID: ${selectedInternship.facultyId}` : "Unknown Faculty")}
+                    </p>
+                  </div>
+                )}
                 <div>
                   <span className="text-xs text-gray-500">Status</span>
                   <p className="text-sm">

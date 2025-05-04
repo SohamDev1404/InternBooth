@@ -213,9 +213,36 @@ export const deleteStudent = async (id: string) => {
 };
 
 export const getInternshipList = async () => {
-  const internshipsRef = collection(db, "internships");
-  const snapshot = await getDocs(internshipsRef);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  try {
+    // Get all internships
+    const internshipsRef = collection(db, "internships");
+    const snapshot = await getDocs(internshipsRef);
+    const internships = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    // Get all faculty
+    const facultyRef = collection(db, "faculty");
+    const facultySnapshot = await getDocs(facultyRef);
+    const facultyMap: Record<string, string> = {};
+    
+    facultySnapshot.docs.forEach(doc => {
+      const facultyData = doc.data();
+      facultyMap[doc.id] = facultyData.name;
+    });
+    
+    // Attach faculty names to internships
+    return internships.map(internship => {
+      if (internship.facultyId && facultyMap[internship.facultyId]) {
+        return {
+          ...internship,
+          facultyName: facultyMap[internship.facultyId]
+        };
+      }
+      return internship;
+    });
+  } catch (error) {
+    console.error("Error fetching internship list with faculty names:", error);
+    throw error;
+  }
 };
 
 export const updateInternship = async (id: string, data: any) => {
@@ -475,9 +502,39 @@ export const onFacultyChange = (callback: (faculty: any[]) => void) => {
 
 export const onInternshipsChange = (callback: (internships: any[]) => void) => {
   const internshipsRef = collection(db, "internships");
-  return onSnapshot(internshipsRef, (snapshot) => {
-    const internships = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    callback(internships);
+  
+  // First, get the faculty data to create a lookup map
+  getDocs(collection(db, "faculty")).then(facultySnapshot => {
+    const facultyMap: Record<string, string> = {};
+    facultySnapshot.docs.forEach(doc => {
+      const facultyData = doc.data();
+      facultyMap[doc.id] = facultyData.name;
+    });
+    
+    // Now set up the real-time listener with faculty names attached
+    return onSnapshot(internshipsRef, (snapshot) => {
+      const internships = snapshot.docs.map(doc => {
+        const data = doc.data();
+        const internship: any = { id: doc.id, ...data };
+        
+        // Attach faculty name if available
+        if (internship.facultyId && facultyMap[internship.facultyId]) {
+          internship.facultyName = facultyMap[internship.facultyId];
+        }
+        
+        return internship;
+      });
+      
+      callback(internships);
+    });
+  }).catch(error => {
+    console.error("Error setting up internships listener with faculty data:", error);
+    
+    // Fallback to basic listener if faculty lookup fails
+    return onSnapshot(internshipsRef, (snapshot) => {
+      const internships = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      callback(internships);
+    });
   });
 };
 
