@@ -65,11 +65,29 @@ export const createFaculty = async (faculty: any) => {
     throw new Error("You must be logged in to perform this action");
   }
   
+  // Create firebase authentication account first
+  let userCredential;
+  try {
+    // Create an auth account for the faculty member
+    userCredential = await createUserWithEmailAndPassword(
+      auth, 
+      faculty.email, 
+      faculty.password
+    );
+    
+    console.log("Created authentication account for faculty:", faculty.email);
+  } catch (authError: any) {
+    console.error("Error creating authentication account:", authError);
+    throw new Error(`Failed to create account: ${authError.message}`);
+  }
+  
   const facultyRef = collection(db, "faculty");
   
-  // Basic document that should always work
+  // Basic document that should always work, omit password from Firestore
+  const { password, ...facultyWithoutPassword } = faculty;
   const facultyData = {
-    ...faculty,
+    ...facultyWithoutPassword,
+    uid: userCredential.user.uid, // Store the authentication UID
     createdAt: serverTimestamp(),
     status: "active"
   };

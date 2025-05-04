@@ -85,7 +85,7 @@ const testFormSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
   questions: z.string().min(10, "Questions must be at least 10 characters"), // This would be a JSON string in real app
-  duration: z.string().min(1, "Please specify duration"),
+  duration: z.string().min(1, "Please specify overall test duration (minutes)"),
 });
 
 type TestFormValues = z.infer<typeof testFormSchema>;
@@ -121,8 +121,21 @@ export default function ManageTests() {
       title: "",
       description: "",
       questions: JSON.stringify([
-        { id: 1, type: "mcq", question: "What is React?", options: ["A UI library", "A programming language", "A database", "An API"] },
-        { id: 2, type: "text", question: "Explain the concept of state in React." }
+        { 
+          id: 1, 
+          type: "mcq", 
+          question: "What is React?", 
+          options: ["A UI library", "A programming language", "A database", "An API"],
+          correctAnswer: 0, // Index of correct option (A UI library)
+          timeAllowed: 2 // Time allowed in minutes for this question
+        },
+        { 
+          id: 2, 
+          type: "text", 
+          question: "Explain the concept of state in React.",
+          correctAnswer: "State is a JavaScript object that stores component data that may change over time.",
+          timeAllowed: 5 // Time allowed in minutes for this question
+        }
       ], null, 2),
       duration: "60",
     },
