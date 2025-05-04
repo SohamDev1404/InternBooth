@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { loginWithEmail, logout as firebaseLogout, auth } from "@/lib/firebase";
+import { loginWithEmail, logout as firebaseLogout, auth, db } from "@/lib/firebase";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 
 interface AuthContextType {
@@ -38,7 +39,7 @@ export function AuthProvider(props: AuthProviderProps) {
     setLoading(false);
     
     // Listen for auth state changes
-    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+    const unsubscribe = auth.onAuthStateChanged(async (authUser) => {
       if (authUser) {
         // User is signed in
         const userData = {
@@ -47,6 +48,18 @@ export function AuthProvider(props: AuthProviderProps) {
           displayName: authUser.displayName || "Super Admin",
           role: "superadmin",
         };
+        
+        // Ensure the user is recorded as a super admin in Firestore
+        try {
+          const userDocRef = doc(db, "users", authUser.uid);
+          await setDoc(userDocRef, {
+            ...userData,
+            lastLogin: serverTimestamp()
+          }, { merge: true });
+        } catch (error) {
+          console.error("Error updating user document:", error);
+        }
+        
         setUser(userData);
         localStorage.setItem("superAdmin", JSON.stringify(userData));
       } else {
@@ -66,14 +79,25 @@ export function AuthProvider(props: AuthProviderProps) {
       setLoading(true);
       const userCredential = await loginWithEmail(email, password);
       
-      // For the super admin dashboard, we'd normally verify admin role in the database
-      // For demo purposes, we're considering all authenticated users as super admins
+      // Create or update the user document in the 'users' collection to mark them as a super admin
+      const userDocRef = doc(db, "users", userCredential.user.uid);
+      
+      // Set user data with superadmin role
+      await setDoc(userDocRef, {
+        uid: userCredential.user.uid,
+        email: userCredential.user.email,
+        displayName: userCredential.user.displayName || "Super Admin",
+        role: "superadmin",
+        lastLogin: serverTimestamp()
+      }, { merge: true });
+      
       const userData = {
         uid: userCredential.user.uid,
         email: userCredential.user.email,
         displayName: userCredential.user.displayName || "Super Admin",
         role: "superadmin",
       };
+      
       setUser(userData);
       localStorage.setItem("superAdmin", JSON.stringify(userData));
       

@@ -95,6 +95,11 @@ export const updateFaculty = async (id: string, data: any) => {
 };
 
 export const deleteFaculty = async (id: string) => {
+  // Make sure a user is authenticated before making the request
+  if (!auth.currentUser) {
+    throw new Error("You must be logged in to perform this action");
+  }
+  
   const facultyRef = doc(db, "faculty", id);
   return deleteDoc(facultyRef);
 };
@@ -120,6 +125,11 @@ export const updateStudent = async (id: string, data: any) => {
 };
 
 export const deleteStudent = async (id: string) => {
+  // Make sure a user is authenticated before making the request
+  if (!auth.currentUser) {
+    throw new Error("You must be logged in to perform this action");
+  }
+  
   const studentRef = doc(db, "students", id);
   return deleteDoc(studentRef);
 };
@@ -131,14 +141,25 @@ export const getInternshipList = async () => {
 };
 
 export const updateInternship = async (id: string, data: any) => {
+  // Make sure a user is authenticated before making the request
+  if (!auth.currentUser) {
+    throw new Error("You must be logged in to perform this action");
+  }
+  
   const internshipRef = doc(db, "internships", id);
   return updateDoc(internshipRef, {
     ...data,
-    updatedAt: serverTimestamp()
+    updatedAt: serverTimestamp(),
+    updatedBy: auth.currentUser.uid // Track who updated this document
   });
 };
 
 export const deleteInternship = async (id: string) => {
+  // Make sure a user is authenticated before making the request
+  if (!auth.currentUser) {
+    throw new Error("You must be logged in to perform this action");
+  }
+  
   const internshipRef = doc(db, "internships", id);
   return deleteDoc(internshipRef);
 };
@@ -179,6 +200,11 @@ export const updateTest = async (id: string, data: any) => {
 };
 
 export const deleteTest = async (id: string) => {
+  // Make sure a user is authenticated before making the request
+  if (!auth.currentUser) {
+    throw new Error("You must be logged in to perform this action");
+  }
+  
   const testRef = doc(db, "tests", id);
   return deleteDoc(testRef);
 };
