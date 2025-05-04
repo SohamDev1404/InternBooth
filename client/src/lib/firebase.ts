@@ -101,22 +101,44 @@ export const updateFaculty = async (id: string, data: any) => {
   
   const facultyRef = doc(db, "faculty", id);
   
-  // Basic updates that should always work
+  // Verify document exists
+  const docSnap = await getDoc(facultyRef);
+  if (!docSnap.exists()) {
+    throw new Error("Faculty document doesn't exist");
+  }
+  
+  // Get existing data to merge with updates
+  const existingData = docSnap.data();
+  
+  // Basic updates that should always work - merge with existing data
   const updateData = {
     ...data,
     updatedAt: serverTimestamp(),
   };
   
-  // Try to add the updatedBy field, but continue even if we can't
+  console.log("Updating faculty with data:", updateData);
+  
   try {
-    return await updateDoc(facultyRef, {
+    // First attempt - with updatedBy
+    await updateDoc(facultyRef, {
       ...updateData,
-      updatedBy: auth.currentUser.uid // Track who updated this document
+      updatedBy: auth.currentUser.uid
     });
+    console.log("Faculty updated successfully with updatedBy");
+    
+    // If successful, get the updated document to return
+    const updatedDoc = await getDoc(facultyRef);
+    return { id, ...updatedDoc.data() };
   } catch (error) {
-    console.warn("Could not add updatedBy, trying without it");
-    // If that fails, try without the updatedBy field
-    return updateDoc(facultyRef, updateData);
+    console.warn("Could not update with updatedBy, trying without it:", error);
+    
+    // Second attempt - without updatedBy
+    await updateDoc(facultyRef, updateData);
+    console.log("Faculty updated successfully without updatedBy");
+    
+    // If successful, get the updated document to return
+    const updatedDoc = await getDoc(facultyRef);
+    return { id, ...updatedDoc.data() };
   }
 };
 
@@ -144,22 +166,39 @@ export const updateStudent = async (id: string, data: any) => {
   
   const studentRef = doc(db, "students", id);
   
-  // Basic updates that should always work
+  // Verify document exists
+  const docSnap = await getDoc(studentRef);
+  if (!docSnap.exists()) {
+    throw new Error("Student document doesn't exist");
+  }
+  
+  // Basic updates that should always work - merge with existing data
   const updateData = {
     ...data,
     updatedAt: serverTimestamp(),
   };
   
-  // Try to add the updatedBy field, but continue even if we can't
+  console.log("Updating student with data:", updateData);
+  
   try {
-    return await updateDoc(studentRef, {
+    // First attempt - with updatedBy
+    await updateDoc(studentRef, {
       ...updateData,
-      updatedBy: auth.currentUser.uid // Track who updated this document
+      updatedBy: auth.currentUser.uid
     });
+    
+    // If successful, get the updated document to return
+    const updatedDoc = await getDoc(studentRef);
+    return { id, ...updatedDoc.data() };
   } catch (error) {
-    console.warn("Could not add updatedBy, trying without it");
-    // If that fails, try without the updatedBy field
-    return updateDoc(studentRef, updateData);
+    console.warn("Could not update with updatedBy, trying without it:", error);
+    
+    // Second attempt - without updatedBy
+    await updateDoc(studentRef, updateData);
+    
+    // If successful, get the updated document to return
+    const updatedDoc = await getDoc(studentRef);
+    return { id, ...updatedDoc.data() };
   }
 };
 
@@ -187,22 +226,77 @@ export const updateInternship = async (id: string, data: any) => {
   
   const internshipRef = doc(db, "internships", id);
   
-  // Basic updates that should always work
+  // Verify document exists
+  const docSnap = await getDoc(internshipRef);
+  if (!docSnap.exists()) {
+    throw new Error("Internship document doesn't exist");
+  }
+  
+  // Get existing faculty ID if present
+  const existingData = docSnap.data();
+  const facultyId = existingData.facultyId;
+  
+  // Basic updates that should always work - merge with existing data
   const updateData = {
     ...data,
     updatedAt: serverTimestamp(),
   };
   
-  // Try to add the updatedBy field, but continue even if we can't
+  console.log("Updating internship with data:", updateData);
+  
   try {
-    return await updateDoc(internshipRef, {
+    // First attempt - with updatedBy
+    await updateDoc(internshipRef, {
       ...updateData,
-      updatedBy: auth.currentUser.uid // Track who updated this document
+      updatedBy: auth.currentUser.uid
     });
+    
+    // If this internship is associated with a faculty member, update their counter
+    if (facultyId && !data.facultyId) {
+      // This means we're keeping the same faculty
+      try {
+        await updateFacultyInternshipCount(facultyId);
+      } catch (error) {
+        console.warn("Failed to update faculty internship count:", error);
+      }
+    } else if (data.facultyId && facultyId !== data.facultyId) {
+      // Faculty changed, update both old and new faculty counts
+      try {
+        if (facultyId) await updateFacultyInternshipCount(facultyId);
+        await updateFacultyInternshipCount(data.facultyId);
+      } catch (error) {
+        console.warn("Failed to update faculty internship counts:", error);
+      }
+    }
+    
+    // If successful, get the updated document to return
+    const updatedDoc = await getDoc(internshipRef);
+    return { id, ...updatedDoc.data() };
   } catch (error) {
-    console.warn("Could not add updatedBy, trying without it");
-    // If that fails, try without the updatedBy field
-    return updateDoc(internshipRef, updateData);
+    console.warn("Could not update with updatedBy, trying without it:", error);
+    
+    // Second attempt - without updatedBy
+    await updateDoc(internshipRef, updateData);
+    
+    // Same faculty update logic as above
+    if (facultyId && !data.facultyId) {
+      try {
+        await updateFacultyInternshipCount(facultyId);
+      } catch (error) {
+        console.warn("Failed to update faculty internship count:", error);
+      }
+    } else if (data.facultyId && facultyId !== data.facultyId) {
+      try {
+        if (facultyId) await updateFacultyInternshipCount(facultyId);
+        await updateFacultyInternshipCount(data.facultyId);
+      } catch (error) {
+        console.warn("Failed to update faculty internship counts:", error);
+      }
+    }
+    
+    // If successful, get the updated document to return
+    const updatedDoc = await getDoc(internshipRef);
+    return { id, ...updatedDoc.data() };
   }
 };
 
@@ -258,22 +352,39 @@ export const updateTest = async (id: string, data: any) => {
   
   const testRef = doc(db, "tests", id);
   
-  // Basic updates that should always work
+  // Verify document exists
+  const docSnap = await getDoc(testRef);
+  if (!docSnap.exists()) {
+    throw new Error("Test document doesn't exist");
+  }
+  
+  // Basic updates that should always work - merge with existing data
   const updateData = {
     ...data,
     updatedAt: serverTimestamp(),
   };
   
-  // Try to add the updatedBy field, but continue even if we can't
+  console.log("Updating test with data:", updateData);
+  
   try {
-    return await updateDoc(testRef, {
+    // First attempt - with updatedBy
+    await updateDoc(testRef, {
       ...updateData,
-      updatedBy: auth.currentUser.uid // Track who updated this document
+      updatedBy: auth.currentUser.uid
     });
+    
+    // If successful, get the updated document to return
+    const updatedDoc = await getDoc(testRef);
+    return { id, ...updatedDoc.data() };
   } catch (error) {
-    console.warn("Could not add updatedBy, trying without it");
-    // If that fails, try without the updatedBy field
-    return updateDoc(testRef, updateData);
+    console.warn("Could not update with updatedBy, trying without it:", error);
+    
+    // Second attempt - without updatedBy
+    await updateDoc(testRef, updateData);
+    
+    // If successful, get the updated document to return
+    const updatedDoc = await getDoc(testRef);
+    return { id, ...updatedDoc.data() };
   }
 };
 
@@ -392,6 +503,48 @@ export const onTestAssignmentsChange = (callback: (assignments: any[]) => void) 
     const assignments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     callback(assignments);
   });
+};
+
+// Helper function to update faculty internship count
+export const updateFacultyInternshipCount = async (facultyId: string) => {
+  // Make sure a user is authenticated before making the request
+  if (!auth.currentUser) {
+    throw new Error("You must be logged in to perform this action");
+  }
+  
+  console.log(`Updating internship count for faculty ID: ${facultyId}`);
+  
+  try {
+    // Get all internships for this faculty
+    const internshipsRef = collection(db, "internships");
+    const q = query(internshipsRef, where("facultyId", "==", facultyId));
+    const snapshot = await getDocs(q);
+    const count = snapshot.size;
+    
+    console.log(`Found ${count} internships for faculty ID: ${facultyId}`);
+    
+    // Update the faculty document with the count
+    const facultyRef = doc(db, "faculty", facultyId);
+    
+    // Check if faculty exists
+    const facultyDoc = await getDoc(facultyRef);
+    if (!facultyDoc.exists()) {
+      throw new Error(`Faculty document with ID ${facultyId} doesn't exist`);
+    }
+    
+    // Update the count
+    await updateDoc(facultyRef, {
+      internshipsPosted: count,
+      updatedAt: serverTimestamp()
+    });
+    
+    console.log(`Successfully updated internship count to ${count} for faculty ID: ${facultyId}`);
+    
+    return count;
+  } catch (error) {
+    console.error(`Error updating internship count for faculty ID: ${facultyId}`, error);
+    throw error;
+  }
 };
 
 // Helper function for handling Firebase errors
