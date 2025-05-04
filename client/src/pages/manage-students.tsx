@@ -393,6 +393,9 @@ export default function ManageStudents() {
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Course/Branch</TableHead>
+                <TableHead>CGPA</TableHead>
+                <TableHead>Interests</TableHead>
+                <TableHead>Skills</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
@@ -400,13 +403,13 @@ export default function ManageStudents() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">
+                  <TableCell colSpan={8} className="text-center py-8">
                     Loading student data...
                   </TableCell>
                 </TableRow>
               ) : filteredStudents.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">
+                  <TableCell colSpan={8} className="text-center py-8">
                     No students found. {searchTerm || courseFilter || statusFilter ? "Try adjusting your filters." : ""}
                   </TableCell>
                 </TableRow>
@@ -423,6 +426,43 @@ export default function ManageStudents() {
                     </TableCell>
                     <TableCell className="text-sm">{student.email || "No email"}</TableCell>
                     <TableCell className="text-sm">{student.course || "Not specified"}</TableCell>
+                    <TableCell className="text-sm">{student.cgpa || "N/A"}</TableCell>
+                    <TableCell className="text-sm">
+                      {student.interests && student.interests.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {student.interests.slice(0, 2).map((interest, index) => (
+                            <span key={index} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                              {interest}
+                            </span>
+                          ))}
+                          {student.interests.length > 2 && (
+                            <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">
+                              +{student.interests.length - 2}
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        "None specified"
+                      )}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {student.skills && student.skills.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {student.skills.slice(0, 2).map((skill, index) => (
+                            <span key={index} className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                              {skill}
+                            </span>
+                          ))}
+                          {student.skills.length > 2 && (
+                            <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">
+                              +{student.skills.length - 2}
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        "None specified"
+                      )}
+                    </TableCell>
                     <TableCell>
                       <span className={cn(
                         "px-2 py-1 rounded-full text-xs",
