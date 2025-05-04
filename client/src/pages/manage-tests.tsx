@@ -7,7 +7,8 @@ import {
   PencilIcon, 
   EyeIcon,
   TrashIcon,
-  CheckCircleIcon
+  CheckCircleIcon,
+  ClockIcon
 } from "lucide-react";
 import { 
   Card, 
@@ -355,23 +356,41 @@ export default function ManageTests() {
     try {
       const questions = JSON.parse(questionsJson);
       return (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {questions.map((q: any, index: number) => (
-            <div key={q.id} className="border p-3 rounded-md">
-              <p className="font-medium">Q{index + 1}: {q.question}</p>
+            <div key={q.id} className="border p-4 rounded-md">
+              <div className="flex justify-between items-start mb-2">
+                <p className="font-medium">Q{index + 1}: {q.question}</p>
+                <div className="flex items-center text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded">
+                  <ClockIcon className="h-3.5 w-3.5 mr-1" />
+                  {q.timeAllowed || "-"} min
+                </div>
+              </div>
+              
               {q.type === "mcq" && (
-                <ul className="mt-2 space-y-1">
-                  {q.options.map((option: string, idx: number) => (
-                    <li key={idx} className="text-sm text-gray-600">
-                      {String.fromCharCode(65 + idx)}. {option}
-                    </li>
-                  ))}
-                </ul>
+                <>
+                  <ul className="mt-2 space-y-1">
+                    {q.options.map((option: string, idx: number) => (
+                      <li key={idx} className={`text-sm p-1 rounded-sm ${q.correctAnswer === idx ? 'bg-green-50 text-green-700 font-medium' : 'text-gray-600'}`}>
+                        {String.fromCharCode(65 + idx)}. {option} 
+                        {q.correctAnswer === idx && <CheckCircleIcon className="h-4 w-4 inline-block ml-1 text-green-600" />}
+                      </li>
+                    ))}
+                  </ul>
+                </>
               )}
+              
               {q.type === "text" && (
-                <p className="mt-2 text-sm text-gray-600">
-                  [Short answer/essay question]
-                </p>
+                <div className="mt-2">
+                  <p className="text-sm text-gray-600">
+                    [Short answer/essay question]
+                  </p>
+                  {q.correctAnswer && (
+                    <div className="mt-2 p-2 bg-green-50 text-green-700 rounded-sm text-sm">
+                      <span className="font-medium">Model Answer:</span> {q.correctAnswer}
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           ))}
@@ -896,16 +915,17 @@ export default function ManageTests() {
           </DialogHeader>
           
           {selectedTest && (
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div>
                 <h3 className="text-lg font-medium">{selectedTest.title}</h3>
-                <div className="flex items-center mt-1 space-x-4">
+                <div className="flex items-center mt-2 space-x-4">
                   <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
                     {selectedTest.status || "Active"}
                   </span>
-                  <span className="text-sm text-gray-500">
-                    {selectedTest.duration} minutes
-                  </span>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <ClockIcon className="h-4 w-4 mr-1" />
+                    <span>Total Duration: {selectedTest.duration} minutes</span>
+                  </div>
                 </div>
               </div>
               
@@ -915,11 +935,21 @@ export default function ManageTests() {
               </div>
               
               <div>
-                <h4 className="text-sm font-medium text-gray-700 mb-1">Questions</h4>
+                <h4 className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                  Questions & Answer Key
+                  <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded">
+                    Correct answers highlighted
+                  </span>
+                </h4>
                 {formatQuestions(selectedTest.questions)}
               </div>
               
-              <DialogFooter className="mt-6">
+              <div className="mt-2 text-xs text-gray-500">
+                <p>* Question timing settings will be enforced during test taking.</p>
+                <p>* Correct answers are only visible to admins and will not be shown to students.</p>
+              </div>
+              
+              <DialogFooter className="mt-4">
                 <Button
                   type="button"
                   variant="outline"
