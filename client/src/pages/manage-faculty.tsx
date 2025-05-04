@@ -125,25 +125,50 @@ export default function ManageFaculty() {
     setIsCreating(true);
     try {
       if (editingFaculty) {
-        // Update existing faculty
-        await updateFaculty(editingFaculty.id, {
-          name: data.name,
-          email: data.email,
-          department: data.department,
-          // Don't update password on edit
-        });
-        
-        // Update local state
-        setFacultyList(facultyList.map(faculty => 
-          faculty.id === editingFaculty.id ? 
-          { ...faculty, name: data.name, email: data.email, department: data.department } : 
-          faculty
-        ));
-        
-        toast({
-          title: "Faculty updated",
-          description: `${data.name}'s account has been updated successfully.`,
-        });
+        // Update existing faculty - use try/catch to handle potential errors
+        try {
+          console.log(`Updating faculty ID ${editingFaculty.id} with new data:`, {
+            name: data.name,
+            email: data.email,
+            department: data.department
+          });
+          
+          // Wait for the update to complete and get the updated faculty object
+          const updatedFaculty = await updateFaculty(editingFaculty.id, {
+            name: data.name,
+            email: data.email,
+            department: data.department,
+            // Don't update password on edit
+          });
+          
+          console.log("Faculty update successful, returned data:", updatedFaculty);
+          
+          // Update local state with the data returned from Firebase
+          setFacultyList(facultyList.map(faculty => 
+            faculty.id === editingFaculty.id ? 
+            { 
+              ...faculty,
+              ...updatedFaculty, // Use all values from updatedFaculty
+              // Ensure these specific fields are definitely updated
+              name: data.name,
+              email: data.email, 
+              department: data.department
+            } : 
+            faculty
+          ));
+          
+          toast({
+            title: "Faculty updated",
+            description: `${data.name}'s account has been updated successfully.`,
+          });
+        } catch (error) {
+          console.error("Error during faculty update:", error);
+          toast({
+            variant: "destructive",
+            title: "Update failed",
+            description: handleFirebaseError(error),
+          });
+        }
       } else {
         // Create new faculty
         const newFaculty = await createFaculty({
@@ -201,11 +226,15 @@ export default function ManageFaculty() {
   const handleToggleStatus = async (faculty: any) => {
     try {
       const newStatus = faculty.status === "active" ? "inactive" : "active";
-      await updateFaculty(faculty.id, { status: newStatus });
+      console.log(`Toggling faculty ID ${faculty.id} status to: ${newStatus}`);
       
-      // Update local state
+      // Wait for the update to complete and get the updated faculty object
+      const updatedFaculty = await updateFaculty(faculty.id, { status: newStatus });
+      console.log("Status update successful, returned data:", updatedFaculty);
+      
+      // Update local state with the data returned from Firebase
       setFacultyList(facultyList.map(f => 
-        f.id === faculty.id ? { ...f, status: newStatus } : f
+        f.id === faculty.id ? { ...f, ...updatedFaculty, status: newStatus } : f
       ));
       
       toast({

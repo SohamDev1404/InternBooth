@@ -322,6 +322,7 @@ export default function ManageInternships() {
                 <TableHead>Title</TableHead>
                 <TableHead>Company</TableHead>
                 <TableHead>Posted By</TableHead>
+                <TableHead>Faculty Name</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
