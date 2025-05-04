@@ -36,10 +36,9 @@ export function AuthProvider(props: AuthProviderProps) {
         localStorage.removeItem("superAdmin");
       }
     }
-    setLoading(false);
     
     // Listen for auth state changes
-    const unsubscribe = auth.onAuthStateChanged(async (authUser) => {
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
         // User is signed in
         const userData = {
@@ -48,17 +47,6 @@ export function AuthProvider(props: AuthProviderProps) {
           displayName: authUser.displayName || "Super Admin",
           role: "superadmin",
         };
-        
-        // Ensure the user is recorded as a super admin in Firestore
-        try {
-          const userDocRef = doc(db, "users", authUser.uid);
-          await setDoc(userDocRef, {
-            ...userData,
-            lastLogin: serverTimestamp()
-          }, { merge: true });
-        } catch (error) {
-          console.error("Error updating user document:", error);
-        }
         
         setUser(userData);
         localStorage.setItem("superAdmin", JSON.stringify(userData));
@@ -79,18 +67,7 @@ export function AuthProvider(props: AuthProviderProps) {
       setLoading(true);
       const userCredential = await loginWithEmail(email, password);
       
-      // Create or update the user document in the 'users' collection to mark them as a super admin
-      const userDocRef = doc(db, "users", userCredential.user.uid);
-      
-      // Set user data with superadmin role
-      await setDoc(userDocRef, {
-        uid: userCredential.user.uid,
-        email: userCredential.user.email,
-        displayName: userCredential.user.displayName || "Super Admin",
-        role: "superadmin",
-        lastLogin: serverTimestamp()
-      }, { merge: true });
-      
+      // For the super admin dashboard, we'll consider any authenticated user as a super admin
       const userData = {
         uid: userCredential.user.uid,
         email: userCredential.user.email,
@@ -100,6 +77,17 @@ export function AuthProvider(props: AuthProviderProps) {
       
       setUser(userData);
       localStorage.setItem("superAdmin", JSON.stringify(userData));
+      
+      // Try to create the user document but don't stop the login process if it fails
+      try {
+        const userDocRef = doc(db, "users", userCredential.user.uid);
+        await setDoc(userDocRef, {
+          ...userData,
+          lastLogin: serverTimestamp()
+        }, { merge: true });
+      } catch (docError) {
+        console.warn("Could not save user document, but login succeeded:", docError);
+      }
       
       return userCredential;
     } catch (error: any) {

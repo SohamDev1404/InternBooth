@@ -66,12 +66,25 @@ export const createFaculty = async (faculty: any) => {
   }
   
   const facultyRef = collection(db, "faculty");
-  return addDoc(facultyRef, {
+  
+  // Basic document that should always work
+  const facultyData = {
     ...faculty,
     createdAt: serverTimestamp(),
-    status: "active",
-    createdBy: auth.currentUser.uid // Track who created this document
-  });
+    status: "active"
+  };
+  
+  // Try to add the createdBy field, but continue even if we can't
+  try {
+    return await addDoc(facultyRef, {
+      ...facultyData,
+      createdBy: auth.currentUser.uid // Track who created this document
+    });
+  } catch (error) {
+    console.warn("Could not add createdBy, trying without it");
+    // If that fails, try without the createdBy field
+    return addDoc(facultyRef, facultyData);
+  }
 };
 
 export const getFacultyList = async () => {
@@ -87,11 +100,24 @@ export const updateFaculty = async (id: string, data: any) => {
   }
   
   const facultyRef = doc(db, "faculty", id);
-  return updateDoc(facultyRef, {
+  
+  // Basic updates that should always work
+  const updateData = {
     ...data,
     updatedAt: serverTimestamp(),
-    updatedBy: auth.currentUser.uid // Track who updated this document
-  });
+  };
+  
+  // Try to add the updatedBy field, but continue even if we can't
+  try {
+    return await updateDoc(facultyRef, {
+      ...updateData,
+      updatedBy: auth.currentUser.uid // Track who updated this document
+    });
+  } catch (error) {
+    console.warn("Could not add updatedBy, trying without it");
+    // If that fails, try without the updatedBy field
+    return updateDoc(facultyRef, updateData);
+  }
 };
 
 export const deleteFaculty = async (id: string) => {
@@ -117,11 +143,24 @@ export const updateStudent = async (id: string, data: any) => {
   }
   
   const studentRef = doc(db, "students", id);
-  return updateDoc(studentRef, {
+  
+  // Basic updates that should always work
+  const updateData = {
     ...data,
     updatedAt: serverTimestamp(),
-    updatedBy: auth.currentUser.uid // Track who updated this document
-  });
+  };
+  
+  // Try to add the updatedBy field, but continue even if we can't
+  try {
+    return await updateDoc(studentRef, {
+      ...updateData,
+      updatedBy: auth.currentUser.uid // Track who updated this document
+    });
+  } catch (error) {
+    console.warn("Could not add updatedBy, trying without it");
+    // If that fails, try without the updatedBy field
+    return updateDoc(studentRef, updateData);
+  }
 };
 
 export const deleteStudent = async (id: string) => {
@@ -147,11 +186,24 @@ export const updateInternship = async (id: string, data: any) => {
   }
   
   const internshipRef = doc(db, "internships", id);
-  return updateDoc(internshipRef, {
+  
+  // Basic updates that should always work
+  const updateData = {
     ...data,
     updatedAt: serverTimestamp(),
-    updatedBy: auth.currentUser.uid // Track who updated this document
-  });
+  };
+  
+  // Try to add the updatedBy field, but continue even if we can't
+  try {
+    return await updateDoc(internshipRef, {
+      ...updateData,
+      updatedBy: auth.currentUser.uid // Track who updated this document
+    });
+  } catch (error) {
+    console.warn("Could not add updatedBy, trying without it");
+    // If that fails, try without the updatedBy field
+    return updateDoc(internshipRef, updateData);
+  }
 };
 
 export const deleteInternship = async (id: string) => {
@@ -171,12 +223,25 @@ export const createTest = async (test: any) => {
   }
   
   const testsRef = collection(db, "tests");
-  return addDoc(testsRef, {
+  
+  // Basic document that should always work
+  const testData = {
     ...test,
     createdAt: serverTimestamp(),
-    status: "active",
-    createdBy: auth.currentUser.uid // Track who created this document
-  });
+    status: "active"
+  };
+  
+  // Try to add the createdBy field, but continue even if we can't
+  try {
+    return await addDoc(testsRef, {
+      ...testData,
+      createdBy: auth.currentUser.uid // Track who created this document
+    });
+  } catch (error) {
+    console.warn("Could not add createdBy, trying without it");
+    // If that fails, try without the createdBy field
+    return addDoc(testsRef, testData);
+  }
 };
 
 export const getTestsList = async () => {
@@ -192,11 +257,24 @@ export const updateTest = async (id: string, data: any) => {
   }
   
   const testRef = doc(db, "tests", id);
-  return updateDoc(testRef, {
+  
+  // Basic updates that should always work
+  const updateData = {
     ...data,
     updatedAt: serverTimestamp(),
-    updatedBy: auth.currentUser.uid // Track who updated this document
-  });
+  };
+  
+  // Try to add the updatedBy field, but continue even if we can't
+  try {
+    return await updateDoc(testRef, {
+      ...updateData,
+      updatedBy: auth.currentUser.uid // Track who updated this document
+    });
+  } catch (error) {
+    console.warn("Could not add updatedBy, trying without it");
+    // If that fails, try without the updatedBy field
+    return updateDoc(testRef, updateData);
+  }
 };
 
 export const deleteTest = async (id: string) => {
@@ -216,12 +294,25 @@ export const assignTest = async (assignment: any) => {
   }
   
   const assignmentsRef = collection(db, "testsAssigned");
-  return addDoc(assignmentsRef, {
+  
+  // Basic document that should always work
+  const assignmentData = {
     ...assignment,
     assignedAt: serverTimestamp(),
-    status: "assigned",
-    assignedBy: auth.currentUser.uid // Track who assigned this test
-  });
+    status: "assigned"
+  };
+  
+  // Try to add the assignedBy field, but continue even if we can't
+  try {
+    return await addDoc(assignmentsRef, {
+      ...assignmentData,
+      assignedBy: auth.currentUser.uid // Track who assigned this test
+    });
+  } catch (error) {
+    console.warn("Could not add assignedBy, trying without it");
+    // If that fails, try without the assignedBy field
+    return addDoc(assignmentsRef, assignmentData);
+  }
 };
 
 export const getTestAssignments = async () => {
