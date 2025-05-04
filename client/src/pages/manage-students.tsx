@@ -51,6 +51,7 @@ import { Label } from "@/components/ui/label";
 import { 
   Form, 
   FormControl, 
+  FormDescription,
   FormField, 
   FormItem, 
   FormLabel, 
@@ -295,6 +296,34 @@ export default function ManageStudents() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>First Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter first name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Last Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter last name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              
+                <FormField
+                  control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
@@ -330,6 +359,70 @@ export default function ManageStudents() {
                       <FormControl>
                         <Input placeholder="Enter course or branch" {...field} />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="cgpa"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>CGPA</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter CGPA" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="passingYear"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Passing Year</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter passing year" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="interests"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Interests</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter interests (comma separated)" {...field} />
+                      </FormControl>
+                      <FormDescription className="text-xs">
+                        Enter interests separated by commas (e.g., "UI/UX, Web Development, Machine Learning")
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="skills"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Skills</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter skills (comma separated)" {...field} />
+                      </FormControl>
+                      <FormDescription className="text-xs">
+                        Enter skills separated by commas (e.g., "JavaScript, React, Python")
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
