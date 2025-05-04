@@ -69,6 +69,12 @@ const studentFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
   course: z.string().min(1, "Please enter a course/branch"),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  cgpa: z.string().optional(),
+  passingYear: z.string().optional(),
+  interests: z.string().optional(),
+  skills: z.string().optional(),
 });
 
 type StudentFormValues = z.infer<typeof studentFormSchema>;
@@ -90,6 +96,12 @@ export default function ManageStudents() {
       name: "",
       email: "",
       course: "",
+      firstName: "",
+      lastName: "",
+      cgpa: "",
+      passingYear: "",
+      interests: "",
+      skills: "",
     },
   });
 
@@ -120,17 +132,38 @@ export default function ManageStudents() {
     setIsUpdating(true);
     try {
       if (editingStudent) {
+        // Process string fields into arrays
+        const interestsArray = data.interests ? data.interests.split(',').map(item => item.trim()).filter(Boolean) : [];
+        const skillsArray = data.skills ? data.skills.split(',').map(item => item.trim()).filter(Boolean) : [];
+        
         // Update existing student
         await updateStudent(editingStudent.id, {
           name: data.name,
           email: data.email,
           course: data.course,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          cgpa: data.cgpa,
+          passingYear: data.passingYear,
+          interests: interestsArray,
+          skills: skillsArray,
         });
         
         // Update local state
         setStudentList(studentList.map(student => 
           student.id === editingStudent.id ? 
-          { ...student, name: data.name, email: data.email, course: data.course } : 
+          { 
+            ...student, 
+            name: data.name, 
+            email: data.email, 
+            course: data.course,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            cgpa: data.cgpa,
+            passingYear: data.passingYear,
+            interests: interestsArray,
+            skills: skillsArray,
+          } : 
           student
         ));
         
@@ -160,9 +193,16 @@ export default function ManageStudents() {
   const handleEditStudent = (student: any) => {
     setEditingStudent(student);
     form.reset({
-      name: student.name,
-      email: student.email,
-      course: student.course,
+      name: student.name || student.displayName || "",
+      email: student.email || "",
+      course: student.course || "",
+      cgpa: student.cgpa || "",
+      passingYear: student.passingYear || "",
+      firstName: student.firstName || "",
+      lastName: student.lastName || "",
+      // Convert arrays to comma-separated strings for form input
+      interests: student.interests?.join(", ") || "",
+      skills: student.skills?.join(", ") || "",
     });
     setShowForm(true);
   };
@@ -430,7 +470,7 @@ export default function ManageStudents() {
                     <TableCell className="text-sm">
                       {student.interests && student.interests.length > 0 ? (
                         <div className="flex flex-wrap gap-1">
-                          {student.interests.slice(0, 2).map((interest, index) => (
+                          {student.interests.slice(0, 2).map((interest: string, index: number) => (
                             <span key={index} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
                               {interest}
                             </span>
@@ -448,7 +488,7 @@ export default function ManageStudents() {
                     <TableCell className="text-sm">
                       {student.skills && student.skills.length > 0 ? (
                         <div className="flex flex-wrap gap-1">
-                          {student.skills.slice(0, 2).map((skill, index) => (
+                          {student.skills.slice(0, 2).map((skill: string, index: number) => (
                             <span key={index} className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
                               {skill}
                             </span>
