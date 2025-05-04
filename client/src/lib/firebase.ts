@@ -231,13 +231,14 @@ export const getInternshipList = async () => {
     
     // Attach faculty names to internships
     return internships.map(internship => {
-      if (internship.facultyId && facultyMap[internship.facultyId]) {
+      const typedInternship: any = internship;
+      if (typedInternship.facultyId && facultyMap[typedInternship.facultyId]) {
         return {
-          ...internship,
-          facultyName: facultyMap[internship.facultyId]
+          ...typedInternship,
+          facultyName: facultyMap[typedInternship.facultyId]
         };
       }
-      return internship;
+      return typedInternship;
     });
   } catch (error) {
     console.error("Error fetching internship list with faculty names:", error);
