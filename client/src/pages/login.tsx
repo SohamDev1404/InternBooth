@@ -78,7 +78,7 @@ export default function Auth() {
         title: "Login successful",
         description: "Welcome to the Super Admin Dashboard",
       });
-      navigate("/superadmin");
+      navigate("/");
     } catch (err: any) {
       console.error("Login error:", err);
       let errorMessage = "Invalid email or password. Please try again.";
@@ -89,6 +89,8 @@ export default function Auth() {
         errorMessage = "User not found. Please register first.";
       } else if (err.code === "auth/wrong-password") {
         errorMessage = "Incorrect password. Please try again.";
+      } else if (err.code === "permission-denied") {
+        errorMessage = "Permission denied. This might be due to Firebase security rules.";
       } else if (err.message) {
         errorMessage = err.message;
       }
@@ -132,6 +134,8 @@ export default function Auth() {
         errorMessage = "Invalid email format. Please check your email.";
       } else if (err.code === "auth/weak-password") {
         errorMessage = "Password is too weak. Please use a stronger password.";
+      } else if (err.code === "permission-denied") {
+        errorMessage = "Permission denied. This might be due to Firebase security rules.";
       } else if (err.message) {
         errorMessage = err.message;
       }

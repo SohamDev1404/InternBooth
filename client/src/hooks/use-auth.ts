@@ -23,7 +23,7 @@ interface AuthProviderProps {
 
 export function AuthProvider(props: AuthProviderProps) {
   const [user, setUser] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   // Check if user is authenticated on mount

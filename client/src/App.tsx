@@ -15,12 +15,16 @@ import DashboardLayout from "@/components/dashboard-layout";
 import { AuthProvider } from "@/hooks/use-auth";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
-  const [location, setLocation] = useLocation();
+  const [_, setLocation] = useLocation();
   // Check if authenticated, redirect to login if not
   const isAuthenticated = localStorage.getItem("superAdmin");
 
+  // If user is not authenticated, redirect to login
   if (!isAuthenticated) {
-    setLocation("/login");
+    // Use setTimeout to avoid state updates during render
+    setTimeout(() => {
+      setLocation("/login");
+    }, 0);
     return null;
   }
 
@@ -69,10 +73,9 @@ function Router() {
       </Route>
       
       <Route path="/">
-        {() => {
-          window.location.href = "/superadmin";
-          return null;
-        }}
+        <DashboardLayout>
+          <ProtectedRoute component={Home} />
+        </DashboardLayout>
       </Route>
       
       <Route component={NotFound} />
