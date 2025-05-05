@@ -78,7 +78,9 @@ import {
   getInternshipList, 
   assignTest,
   getTestAssignments,
-  handleFirebaseError
+  handleFirebaseError,
+  onTestsChange,
+  onTestAssignmentsChange
 } from "@/lib/firebase";
 
 // Test form schema
@@ -154,14 +156,11 @@ export default function ManageTests() {
 
   // Fetch data
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
+    setIsLoading(true);
+    
+    const fetchInitialData = async () => {
       try {
-        // Fetch tests
-        const testsData = await getTestsList();
-        setTests(testsData);
-        
-        // Fetch students, internships, applications, and test assignments
+        // Fetch students, internships, applications
         const studentsData = await getStudentList();
         setStudents(studentsData);
         
@@ -170,11 +169,8 @@ export default function ManageTests() {
         
         const applicationsData = await getApplications();
         setApplications(applicationsData);
-        
-        const assignmentsData = await getTestAssignments();
-        setTestAssignments(assignmentsData);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching initial data:", error);
         toast({
           variant: "destructive",
           title: "Error fetching data",
@@ -185,7 +181,25 @@ export default function ManageTests() {
       }
     };
     
-    fetchData();
+    // Set up real-time listeners
+    const unsubscribeTests = onTestsChange((testsData) => {
+      console.log("Real-time tests update:", testsData);
+      setTests(testsData);
+    });
+    
+    const unsubscribeTestAssignments = onTestAssignmentsChange((assignmentsData) => {
+      console.log("Real-time test assignments update:", assignmentsData);
+      setTestAssignments(assignmentsData);
+    });
+    
+    // Fetch other data that doesn't need real-time updates
+    fetchInitialData();
+    
+    // Clean up listeners on component unmount
+    return () => {
+      unsubscribeTests();
+      unsubscribeTestAssignments();
+    };
   }, [toast]);
   
   // Create a new test
